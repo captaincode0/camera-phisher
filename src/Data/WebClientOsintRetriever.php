@@ -14,7 +14,7 @@ class WebClientOsintRetriever implements StorageModelTransformableInterface {
     public const FIELD_SERVER_HTTP_CLIENT_IP = 'HTTP_CLIENT_IP';
     public const FIELD_SERVER_HTTP_X_FORWARDED_FOR = 'HTTP_X_FORWARDED_FOR';
     public const FIELD_SERVER_REMOTE_ADDR = 'REMOTE_ADDR';
-    public const FIELD_USER_AGENT = 'USER_AGENT';
+    public const FIELD_USER_AGENT = 'HTTP_USER_AGENT';
 
     public function __construct(array $server)
     {
@@ -39,14 +39,15 @@ class WebClientOsintRetriever implements StorageModelTransformableInterface {
 
     private function isKeyInServer(string $key): bool
     {
-        return !array_key_exists($key, $this->server);
+        return array_key_exists($key, $this->server);
     }
 
     public function toModel(): StorableDataInterface
     {
         $webClientModel = new WebClientDataModel();
 
-        $webClientModel->setIpAddress($this->getIpAddress())
+        $webClientModel
+            ->setIpAddress($this->getIpAddress())
             ->setUserAgent($this->getUserAgent());
 
         return $webClientModel;

