@@ -1,0 +1,8 @@
+/.idea
+/vscode
+
+/vendor
+/victim-data
+
+!/victim-data/.keepme
+.DS_Store
