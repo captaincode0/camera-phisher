@@ -2,8 +2,12 @@
 /vscode
 
 /vendor
-/victim-data
+/victim-data/osint
+/victim-data/photos
 
 .DS_Store
-!/victim-data/.keepme
+!/victim-data/osint/.keepme
 !/victim-data/photos/.keepme
+
+index.php
+index2.html
