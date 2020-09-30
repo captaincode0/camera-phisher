@@ -4,5 +4,6 @@
 /vendor
 /victim-data
 
-!/victim-data/.keepme
 .DS_Store
+!/victim-data/.keepme
+!/victim-data/photos/.keepme
